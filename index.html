@@ -44,13 +44,14 @@
     background: var(--dark);
     color: var(--gold-mid);
     text-align: center;
-    padding: 11px 16px;
+    padding: 10px 16px;
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.02em;
     position: sticky;
     top: 0;
     z-index: 100;
+    line-height: 1.5;
   }
   .banner span { opacity: 0.45; margin: 0 8px; }
 
@@ -63,11 +64,11 @@
     height: 64px;
     overflow: visible;
     border-bottom: 0.5px solid var(--border);
-    background: rgba(253,250,245,0.92);
+    background: rgba(253,250,245,0.97);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     position: sticky;
-    top: 42px;
+    top: 40px;
     z-index: 99;
   }
   .nav-logo {
@@ -102,6 +103,68 @@
     transition: background .2s, transform .15s;
   }
   .nav-cta:hover { background: var(--gold-deep); transform: translateY(-1px); }
+
+  /* ─── HAMBURGER ─── */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 28px;
+    height: 22px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 110;
+  }
+  .nav-hamburger span {
+    display: block;
+    width: 28px;
+    height: 2px;
+    background: var(--dark);
+    border-radius: 2px;
+    transition: all .3s;
+    transform-origin: right center;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: rotate(-45deg) translate(1px, -1px); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .nav-hamburger.open span:nth-child(3) { transform: rotate(45deg) translate(1px, 1px); }
+
+  /* ─── MOBILE DRAWER ─── */
+  .nav-drawer {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(253,250,245,0.98);
+    z-index: 98;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 80px 24px 40px;
+  }
+  .nav-drawer.open { display: flex; }
+  .nav-drawer a {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--dark);
+    text-decoration: none;
+    transition: color .2s;
+  }
+  .nav-drawer a:hover { color: var(--gold); }
+  .nav-drawer .drawer-cta {
+    background: var(--gold);
+    color: #fff;
+    border: none;
+    padding: 16px 36px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    margin-top: 8px;
+    box-shadow: 0 4px 20px rgba(197,147,58,0.35);
+  }
 
   /* ─── HERO ─── */
   .hero {
@@ -737,20 +800,56 @@
   .wa-btn svg { width: 28px; height: 28px; fill: #fff; }
 
   /* ─── RESPONSIVE ─── */
-  @media (max-width: 640px) {
-    nav { padding: 12px 16px; }
+  @media (max-width: 768px) {
+    /* Banner */
+    .banner { font-size: 11px; padding: 8px 12px; letter-spacing: 0; }
+    .banner span { margin: 0 4px; }
+
+    /* Nav — show hamburger, hide desktop items */
+    nav {
+      padding: 0 16px;
+      height: 56px;
+      top: 36px;         /* approximate banner height at small size */
+    }
     .nav-links { display: none; }
-    .hero { padding: 48px 16px 48px; }
-    .hero h1 { font-size: 28px; }
-    .section { padding: 48px 16px; }
-    .outcomes-grid, .diff-grid, .text-testi-grid { grid-template-columns: 1fr; }
+    .nav-cta   { display: none; }
+    .nav-hamburger { display: flex; }
+
+    /* Hero */
+    .hero { padding: 40px 16px 40px; }
+    .hero h1 { font-size: 26px; }
+    .hero-sub { font-size: 14px; }
+
+    /* Sections */
+    .section { padding: 40px 16px; }
+    .section-title { font-size: 22px; }
+
+    /* Grids → single column */
+    .outcomes-grid,
+    .diff-grid,
+    .text-testi-grid { grid-template-columns: 1fr; }
     .video-testi-grid { grid-template-columns: 1fr 1fr; }
+
+    /* Divider */
     hr.divider { margin: 0 16px; }
-    .price-card { padding: 28px 20px; }
-    .price-row { flex-direction: column; gap: 8px; }
+
+    /* Pricing */
+    .price-card { padding: 24px 16px; }
+    .price-row  { flex-direction: column; gap: 8px; }
+    .price-amount .amount { font-size: 40px; }
+
+    /* Footer CTA */
+    .footer-cta h2 { font-size: 22px; }
+    .footer-cta p  { font-size: 13px; }
+
+    /* WhatsApp float */
+    .wa-float { bottom: 16px; left: 16px; }
   }
+
   @media (max-width: 400px) {
     .video-testi-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 22px; }
+    .banner { font-size: 10px; }
   }
 </style>
 </head>
@@ -776,7 +875,19 @@
     
   </ul>
   <button class="nav-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">انضم الآن — $249</button>
+  <button class="nav-hamburger" id="navHamburger" onclick="toggleDrawer()" aria-label="القائمة">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE NAV DRAWER -->
+<div class="nav-drawer" id="navDrawer">
+  <a href="#outcomes" onclick="toggleDrawer()">البرنامج</a>
+  <a href="#testimonials" onclick="toggleDrawer()">آراء الطلاب</a>
+  <a href="#pricing" onclick="toggleDrawer()">السعر</a>
+  <a href="#faq" onclick="toggleDrawer()">أسئلة</a>
+  <button class="drawer-cta" onclick="toggleDrawer(); window.location.href='https://www.expertiseflow.com/experttobiz-checkout'">انضم الآن — $249</button>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -1438,6 +1549,16 @@
 </div>
 
 <script>
+  /* ─── MOBILE HAMBURGER ─── */
+  function toggleDrawer() {
+    var drawer = document.getElementById('navDrawer');
+    var btn = document.getElementById('navHamburger');
+    var isOpen = drawer.classList.contains('open');
+    drawer.classList.toggle('open');
+    btn.classList.toggle('open');
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  }
+
   /* ─── FAQ ─── */
   function toggleFaq(i) {
     var a = document.getElementById('fa' + i);
